@@ -636,20 +636,7 @@
       animation: shake 0.3s ease;
     }
 
-    /* 移动端点击提示 */
-    .mobile-tap-hint {
-      display: none;
-      color: var(--text-dim);
-      font-size: 0.85rem;
-      margin-top: 10px;
-      opacity: 0.7;
-    }
 
-    @media (max-width: 768px) {
-      .mobile-tap-hint {
-        display: block;
-      }
-    }
 
     @keyframes inputPulse {
       0% { transform: scale(1); }
@@ -989,7 +976,6 @@
       <div class="hint-text" id="hintText">输入罗马字后按空格确认</div>
       <div class="input-area">
         <input type="text" class="typing-input" id="typingInput" placeholder="输入罗马字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
-        <div class="mobile-tap-hint">💡 输入完自动判定</div>
       </div>
       <div class="tip" id="tipText">
         <kbd>空格</kbd> 确认
@@ -1501,9 +1487,9 @@
       // 更新快捷键提示
       const tipText = document.getElementById('tipText');
       if (mode === 'learn') {
-        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>Enter</kbd> 跳过 &nbsp;|&nbsp; 📱输入完自动判定';
+        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>Enter</kbd> 跳过';
       } else {
-        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; 📱输入完自动判定';
+        tipText.innerHTML = '<kbd>空格</kbd> 确认';
       }
       
       // 重置血量
