@@ -1616,9 +1616,12 @@
       }
     });
 
-    // 移动端输入事件 - 输入完整后自动提交
+    // 检测是否为触摸设备
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+
+    // 移动端输入事件 - 输入完整后自动提交（仅触摸设备生效）
     typingInput.addEventListener('input', function(e) {
-      if (isComplete || !currentItem) return;
+      if (isComplete || !currentItem || !isTouchDevice) return;
 
       const input = typingInput.value.trim();
 
