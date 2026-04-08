@@ -613,6 +613,11 @@
       transition: all 0.2s ease;
       ime-mode: disabled;
       letter-spacing: 4px;
+      /* 移动端优化 */
+      -webkit-appearance: none;
+      appearance: none;
+      font-family: inherit;
+      touch-action: manipulation;
     }
 
     .typing-input:focus {
@@ -629,6 +634,21 @@
     .typing-input.wrong {
       border-color: var(--primary);
       animation: shake 0.3s ease;
+    }
+
+    /* 移动端点击提示 */
+    .mobile-tap-hint {
+      display: none;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-top: 10px;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-tap-hint {
+        display: block;
+      }
     }
 
     @keyframes inputPulse {
@@ -829,6 +849,27 @@
       .practice-area {
         padding: 35px 20px;
       }
+      /* 移动端输入优化 */
+      .typing-input {
+        font-size: 1.5rem;
+        padding: 16px 20px;
+        /* 防止缩放 */
+        font-size-adjust: 100%;
+      }
+      .input-area {
+        max-width: 100%;
+      }
+      /* 移动端底部固定 */
+      body {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+      }
+    }
+
+    /* 防止iOS自动放大 */
+    @media screen and (max-width: 768px) {
+      input, textarea, select {
+        font-size: 16px !important;
+      }
     }
   </style>
 </head>
@@ -947,7 +988,8 @@
       <div class="meaning-display" id="meaningDisplay"></div>
       <div class="hint-text" id="hintText">输入罗马字后按空格确认</div>
       <div class="input-area">
-        <input type="text" class="typing-input" id="typingInput" placeholder="输入罗马字" autocomplete="off" autofocus>
+        <input type="text" class="typing-input" id="typingInput" placeholder="输入罗马字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+        <div class="mobile-tap-hint">💡 输入完自动判定</div>
       </div>
       <div class="tip" id="tipText">
         <kbd>空格</kbd> 确认
@@ -1396,7 +1438,7 @@
         meaningDisplay.classList.remove('show');
       }
       
-      hintText.textContent = '输入罗马字后按空格确认';
+      hintText.textContent = '输入罗马字（空格确认 / 手机自动判定）';
       hintText.classList.remove('correct', 'wrong');
       
       typingInput.value = '';
@@ -1459,9 +1501,9 @@
       // 更新快捷键提示
       const tipText = document.getElementById('tipText');
       if (mode === 'learn') {
-        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>Enter</kbd> 跳过';
+        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>Enter</kbd> 跳过 &nbsp;|&nbsp; 📱输入完自动判定';
       } else {
-        tipText.innerHTML = '<kbd>空格</kbd> 确认';
+        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; 📱输入完自动判定';
       }
       
       // 重置血量
@@ -1560,7 +1602,7 @@
         e.preventDefault();
         submitAnswer();
       }
-      
+
       // Tab键：显示答案（仅学习模式）
       if (e.key === 'Tab') {
         e.preventDefault();
@@ -1583,6 +1625,33 @@
           updateDisplay();
         }
         // 挑战模式不可跳过
+      }
+    });
+
+    // 移动端输入事件 - 输入完整后自动提交
+    typingInput.addEventListener('input', function(e) {
+      if (isComplete || !currentItem) return;
+
+      const input = typingInput.value.trim();
+
+      // 如果输入长度达到目标长度，自动提交
+      if (input.length >= currentItem.romaji.length) {
+        // 延迟一点让用户看到输入内容
+        setTimeout(() => {
+          submitAnswer();
+        }, 100);
+      }
+    });
+
+    // 移动端：点击输入框时重新聚焦
+    typingInput.addEventListener('click', function() {
+      this.focus();
+    });
+
+    // 移动端：点击假名区域激活输入
+    document.getElementById('practiceArea').addEventListener('click', function() {
+      if (!isComplete) {
+        typingInput.focus();
       }
     });
 
