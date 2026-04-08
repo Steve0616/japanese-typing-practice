@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日语打字练习 - 五十音图挑战</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #ff6b6b;
+      --success: #51cf66;
+      --warning: #ffd93d;
+      --bg: #0f0f0f;
+      --card-bg: #1a1a1a;
+      --text: #f8f9fa;
+      --text-dim: #868e96;
+      --border: #2d2d2d;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* 顶部导航 */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--primary), var(--warning));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* 平假名/片假名切换 */
+    .kana-toggle {
+      display: flex;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .kana-toggle-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .kana-toggle-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* 模式切换 */
+    .mode-switch {
+      display: flex;
+      gap: 10px;
+    }
+
+    .mode-btn {
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* 阶段选项卡 */
+    .stage-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .stage-tab {
+      padding: 10px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .stage-tab:hover {
+      border-color: var(--primary);
+    }
+
+    .stage-tab.active {
+      background: linear-gradient(135deg, var(--primary), #ff8787);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* 学习模式提示 */
+    .learn-mode-hint {
+      background: var(--card-bg);
+      border: 1px dashed var(--border);
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    /* Tips说明 */
+    .tips-box {
+      background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,217,61,0.1));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .tips-box h3 {
+      font-size: 1rem;
+      color: var(--warning);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tips-box h3::before {
+      content: '💡';
+    }
+
+    .tips-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tips-list li {
+      padding: 8px 0;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .tips-list li:last-child {
+      border-bottom: none;
+    }
+
+    .tips-list li::before {
+      content: '•';
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .tips-list strong {
+      color: var(--text);
+    }
+
+    .tips-highlight {
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    /* 血量系统 */
+    .health-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .health-label {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-right: 5px;
+    }
+
+    .health-hearts {
+      display: flex;
+      gap: 6px;
+    }
+
+    .heart {
+      font-size: 1.4rem;
+      transition: all 0.3s ease;
+    }
+
+    .heart.full {
+      filter: drop-shadow(0 0 4px #ff6b6b);
+    }
+
+    .heart.empty {
+      opacity: 0.3;
+      filter: grayscale(1);
+    }
+
+    .heart.losing {
+      animation: loseHeart 0.5s ease-out;
+    }
+
+    @keyframes loseHeart {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+      100% { transform: scale(0.8); opacity: 0.3; filter: grayscale(1); }
+    }
+
+    /* 失败弹窗 */
+    .fail-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .fail-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .fail-modal {
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-radius: 20px;
+      padding: 40px 50px;
+      text-align: center;
+      transform: scale(0.8);
+      transition: transform 0.3s ease;
+    }
+
+    .fail-overlay.show .fail-modal {
+      transform: scale(1);
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+    }
+
+    .fail-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      overflow: hidden;
+      border: 3px solid var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--warning));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+    }
+
+    .fail-title {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .fail-subtitle {
+      color: var(--text-dim);
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    .fail-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 25px;
+    }
+
+    .fail-stat {
+      text-align: center;
+    }
+
+    .fail-stat .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--warning);
+    }
+
+    .fail-stat .label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .fail-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .fail-btn {
+      padding: 12px 25px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .fail-btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .fail-btn.secondary {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    .fail-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    /* 挑战模式提示 */
+    .challenge-hint {
+      background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,107,107,0.05));
+      border: 1px solid var(--primary);
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--primary);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* 统计面板 */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      background: var(--card-bg);
+      padding: 15px 10px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    /* 词条进度点 */
+    .progress-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .progress-dot {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .progress-dot.mastered {
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .progress-dot.learning {
+      background: var(--warning);
+    }
+
+    .progress-dot.wrong {
+      background: var(--primary);
+    }
+
+    /* 连击提示 */
+    .combo-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 5rem;
+      font-weight: bold;
+      color: var(--success);
+      text-shadow: 0 0 30px var(--success), 0 0 60px var(--success);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 100;
+    }
+
+    .combo-overlay.show {
+      animation: comboPopup 0.8s ease-out forwards;
+    }
+
+    @keyframes comboPopup {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+      40% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(0.8);
+      }
+    }
+
+    /* 正确提示 */
+    .correct-popup {
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5rem;
+      color: var(--success);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 99;
+    }
+
+    .correct-popup.show {
+      animation: correctPop 0.5s ease-out forwards;
+    }
+
+    @keyframes correctPop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      30% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -70%) scale(0.8);
+      }
+    }
+
+    /* 练习区域 */
+    .practice-area {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 50px 40px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .practice-area::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--warning), var(--success));
+      opacity: 0.5;
+    }
+
+    .kana-display {
+      font-size: 8rem;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 15px;
+      letter-spacing: 12px;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .kana-display.pop {
+      animation: kanaPop 0.2s ease;
+    }
+
+    @keyframes kanaPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .meaning-display {
+      font-size: 1.3rem;
+      color: var(--text-dim);
+      margin-bottom: 25px;
+      min-height: 32px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .meaning-display.show {
+      opacity: 1;
+    }
+
+    .hint-text {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      margin-bottom: 30px;
+      min-height: 28px;
+    }
+
+    .hint-text.correct {
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .hint-text.wrong {
+      color: var(--primary);
+    }
+
+    /* 输入区域 */
+    .input-area {
+      position: relative;
+      max-width: 350px;
+      margin: 0 auto;
+    }
+
+    .typing-input {
+      width: 100%;
+      padding: 18px 25px;
+      font-size: 1.8rem;
+      background: var(--bg);
+      border: 3px solid var(--border);
+      border-radius: 16px;
+      color: var(--text);
+      text-align: center;
+      outline: none;
+      transition: all 0.2s ease;
+      ime-mode: disabled;
+      letter-spacing: 4px;
+    }
+
+    .typing-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+    }
+
+    .typing-input.correct {
+      border-color: var(--success);
+      box-shadow: 0 0 25px rgba(81, 207, 102, 0.5);
+      animation: inputPulse 0.3s ease;
+    }
+
+    .typing-input.wrong {
+      border-color: var(--primary);
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes inputPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+    }
+
+    /* 底部提示 */
+    .tip {
+      margin-top: 20px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .tip kbd {
+      background: var(--bg);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-family: monospace;
+    }
+
+    /* 底部进度条 */
+    .master-progress {
+      margin-top: 20px;
+    }
+
+    .master-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), var(--warning));
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 5px;
+    }
+
+    /* 完成画面 */
+    .complete-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 40px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .complete-screen.show {
+      display: block;
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .complete-icon {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      animation: bounce 1s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .complete-screen h2 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, var(--success), var(--warning));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .complete-stats {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 35px;
+      flex-wrap: wrap;
+    }
+
+    .complete-stat {
+      text-align: center;
+      background: var(--bg);
+      padding: 25px 35px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .complete-stat .value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .complete-stat .label {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, var(--primary), #ff8787);
+      color: white;
+      border: none;
+      padding: 16px 50px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .restart-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+    }
+
+    /* 音效开关 */
+    .sound-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 8px 12px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .sound-toggle.active {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .sound-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* 响应式 */
+    @media (max-width: 600px) {
+      .kana-display {
+        font-size: 5rem;
+      }
+      .progress-grid {
+        grid-template-columns: repeat(8, 1fr);
+      }
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-value {
+        font-size: 1.5rem;
+      }
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .combo-overlay {
+        font-size: 3.5rem;
+      }
+      .practice-area {
+        padding: 35px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部导航 -->
+    <div class="nav">
+      <div class="logo">日语打字</div>
+      <div class="nav-controls">
+        <!-- 平假名/片假名切换 -->
+        <div class="kana-toggle">
+          <button class="kana-toggle-btn active" id="btnHira" onclick="setKanaType('hira')">平假名</button>
+          <button class="kana-toggle-btn" id="btnKata" onclick="setKanaType('kata')">片假名</button>
+        </div>
+        <!-- 模式切换 -->
+        <div class="mode-switch">
+          <button class="mode-btn active" id="modeChallenge" onclick="setMode('challenge')">挑战</button>
+          <button class="mode-btn" id="modeLearn" onclick="setMode('learn')">学习</button>
+        </div>
+        <!-- 音效开关 -->
+        <div class="sound-toggle active" id="soundToggle" onclick="toggleSound()">
+          <svg viewBox="0 0 24 24" fill="currentColor" id="soundIcon">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <span>音效</span>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <h1 id="headerTitle">五十音图挑战</h1>
+      <p id="headerDesc">看假名 → 输入罗马字 → 空格确认</p>
+    </header>
+
+    <!-- 学习阶段选择 -->
+    <div class="stage-tabs">
+      <button class="stage-tab active" data-stage="seion" onclick="switchStage('seion')">清音</button>
+      <button class="stage-tab" data-stage="dakuon" onclick="switchStage('dakuon')">浊音</button>
+      <button class="stage-tab" data-stage="youon" onclick="switchStage('youon')">拗音</button>
+      <button class="stage-tab" data-stage="sokuon" onclick="switchStage('sokuon')">促音</button>
+      <button class="stage-tab" data-stage="all" onclick="switchStage('all')">全部</button>
+    </div>
+
+    <!-- Tips说明 -->
+    <div class="tips-box">
+      <h3>入门指南</h3>
+      <ul class="tips-list">
+        <li><strong>词条机制：</strong>每个假名需要<span class="tips-highlight">连续答对3次</span>才算掌握，错误会增加出现频率</li>
+        <li><strong>学习模式：</strong>宽松练习，可跳过，显示释义，答错不扣血，适合<span class="tips-highlight">初次熟悉发音</span></li>
+        <li><strong>挑战模式：</strong>严格考核，不显示释义，不可跳过，答错/放弃扣血，<span class="tips-highlight">3条命</span>，通关即掌握</li>
+        <li><strong>推荐顺序：</strong>学习模式熟悉发音 → 挑战模式通关清音 → 浊音/拗音/促音 → 全部</li>
+      </ul>
+    </div>
+
+    <!-- 学习模式提示 -->
+    <div class="learn-mode-hint" id="learnModeHint" style="display: none;">
+      💡 学习模式：宽松练习，可跳过，显示释义，答错不扣血
+    </div>
+
+    <!-- 挑战模式提示 -->
+    <div class="challenge-hint" id="challengeHint" style="display: none;">
+      ⚔️ 挑战模式：严格考核，不显示释义，不可跳过，不可预览答案，3条命
+    </div>
+
+    <!-- 血量显示 -->
+    <div class="health-bar" id="healthBar" style="display: none;">
+      <span class="health-label">生命值</span>
+      <div class="health-hearts" id="healthHearts">
+        <span class="heart full" data-index="1">❤️</span>
+        <span class="heart full" data-index="2">❤️</span>
+        <span class="heart full" data-index="3">❤️</span>
+      </div>
+    </div>
+
+    <!-- 统计面板 -->
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="masteredCount">0</div>
+        <div class="stat-label">已掌握</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="learningCount">0</div>
+        <div class="stat-label">学习中</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="totalItems">0</div>
+        <div class="stat-label">总词条</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="streakCount">0</div>
+        <div class="stat-label">当前连续</div>
+      </div>
+    </div>
+
+    <!-- 词条进度点 -->
+    <div class="progress-grid" id="progressGrid"></div>
+
+    <!-- 连击提示 -->
+    <div class="combo-overlay" id="comboOverlay"></div>
+    <div class="correct-popup" id="correctPopup">✓</div>
+
+    <!-- 进度条 -->
+    <div class="master-progress">
+      <div class="master-progress-label">
+        <span>掌握进度</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- 练习区域 -->
+    <div class="practice-area" id="practiceArea">
+      <div class="kana-display" id="kanaDisplay">あ</div>
+      <div class="meaning-display" id="meaningDisplay"></div>
+      <div class="hint-text" id="hintText">输入罗马字后按空格确认</div>
+      <div class="input-area">
+        <input type="text" class="typing-input" id="typingInput" placeholder="输入罗马字" autocomplete="off" autofocus>
+      </div>
+      <div class="tip" id="tipText">
+        <kbd>空格</kbd> 确认
+      </div>
+    </div>
+
+    <!-- 失败弹窗 -->
+    <div class="fail-overlay" id="failOverlay">
+      <div class="fail-modal">
+        <div class="fail-avatar">🐴</div>
+        <div class="fail-title">菜就多练</div>
+        <div class="fail-subtitle">—— 小马</div>
+        <div class="fail-stats">
+          <div class="fail-stat">
+            <div class="value" id="failAttempts">0</div>
+            <div class="label">总尝试</div>
+          </div>
+          <div class="fail-stat">
+            <div class="value" id="failStreak">0</div>
+            <div class="label">最高连续</div>
+          </div>
+        </div>
+        <div class="fail-buttons">
+          <button class="fail-btn secondary" onclick="switchToLearnMode()">去学习模式</button>
+          <button class="fail-btn primary" onclick="restartChallenge()">重新挑战</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 完成画面 -->
+    <div class="complete-screen" id="completeScreen">
+      <div class="complete-icon">🎉</div>
+      <h2>恭喜通关！</h2>
+      <p style="color: var(--text-dim); margin-bottom: 30px;">你已经掌握所有假名</p>
+      <div class="complete-stats">
+        <div class="complete-stat">
+          <div class="value" id="finalStreak">0</div>
+          <div class="label">最高连续</div>
+        </div>
+        <div class="complete-stat">
+          <div class="value" id="finalAttempts">0</div>
+          <div class="label">总尝试</div>
+        </div>
+        <div class="complete-stat">
+          <div class="value" id="finalTime">0s</div>
+          <div class="label">用时</div>
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restartPractice()">再练一遍</button>
+    </div>
+  </div>
+
+  <script>
+    // ========== 音效系统 ==========
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new AudioCtx();
+      }
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      initAudio();
+      
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      if (type === 'correct') {
+        // 正确音效 - 清脆的上升音
+        oscillator.frequency.setValueAtTime(523, audioCtx.currentTime); // C5
+        oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1); // E5
+        oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2); // G5
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialDecayTo = 0.01;
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialDecayTo = 0.01;
+        gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.3);
+      } else if (type === 'wrong') {
+        // 错误音效 - 低沉的下行音
+        oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+        oscillator.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.2);
+      } else if (type === 'combo') {
+        // 连击音效 - 欢快的上升音阶
+        const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.08);
+          gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.08 + 0.15);
+          osc.start(audioCtx.currentTime + i * 0.08);
+          osc.stop(audioCtx.currentTime + i * 0.08 + 0.15);
+        });
+      } else if (type === 'complete') {
+        // 通关音效 - 胜利旋律
+        const notes = [523, 659, 784, 659, 784, 1047];
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.frequency.value = freq;
+          osc.type = 'sine';
+          gain.gain.setValueAtTime(0.25, audioCtx.currentTime + i * 0.12);
+          gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.12 + 0.2);
+          osc.start(audioCtx.currentTime + i * 0.12);
+          osc.stop(audioCtx.currentTime + i * 0.12 + 0.25);
+        });
+      } else if (type === 'skip') {
+        // 跳过音效 - 短促提示音
+        oscillator.frequency.value = 400;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.1);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const toggle = document.getElementById('soundToggle');
+      const icon = document.getElementById('soundIcon');
+      
+      if (soundEnabled) {
+        toggle.classList.add('active');
+        icon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+      } else {
+        toggle.classList.remove('active');
+        icon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+      }
+    }
+
+    // ========== 数据 ==========
+    // 平假名数据
+    const seionData = {
+      groups: [
+        { name: "あ行", items: [{ romaji: "a", kana: "あ", meaning: "啊" }, { romaji: "i", kana: "い", meaning: "一" }, { romaji: "u", kana: "う", meaning: "乌" }, { romaji: "e", kana: "え", meaning: "诶" }, { romaji: "o", kana: "お", meaning: "哦" }] },
+        { name: "か行", items: [{ romaji: "ka", kana: "か", meaning: "咖" }, { romaji: "ki", kana: "き", meaning: "key" }, { romaji: "ku", kana: "く", meaning: "库" }, { romaji: "ke", kana: "け", meaning: "开" }, { romaji: "ko", kana: "こ", meaning: "抠" }] },
+        { name: "さ行", items: [{ romaji: "sa", kana: "さ", meaning: "撒" }, { romaji: "shi", kana: "し", meaning: "吸" }, { romaji: "su", kana: "す", meaning: "思" }, { romaji: "se", kana: "せ", meaning: "塞" }, { romaji: "so", kana: "そ", meaning: "搜" }] },
+        { name: "た行", items: [{ romaji: "ta", kana: "た", meaning: "他" }, { romaji: "chi", kana: "ち", meaning: "七" }, { romaji: "tsu", kana: "つ", meaning: "次" }, { romaji: "te", kana: "て", meaning: "忒" }, { romaji: "to", kana: "と", meaning: "托" }] },
+        { name: "な行", items: [{ romaji: "na", kana: "な", meaning: "那" }, { romaji: "ni", kana: "に", meaning: "泥" }, { romaji: "nu", kana: "ぬ", meaning: "努" }, { romaji: "ne", kana: "ね", meaning: "内" }, { romaji: "no", kana: "の", meaning: "诺" }] },
+        { name: "は行", items: [{ romaji: "ha", kana: "は", meaning: "哈" }, { romaji: "hi", kana: "ひ", meaning: "黑" }, { romaji: "fu", kana: "ふ", meaning: "夫" }, { romaji: "he", kana: "へ", meaning: "黑(敬)" }, { romaji: "ho", kana: "ほ", meaning: "厚" }] },
+        { name: "ま行", items: [{ romaji: "ma", kana: "ま", meaning: "妈" }, { romaji: "mi", kana: "み", meaning: "米" }, { romaji: "mu", kana: "む", meaning: "木" }, { romaji: "me", kana: "め", meaning: "妹" }, { romaji: "mo", kana: "も", meaning: "摸" }] },
+        { name: "や行", items: [{ romaji: "ya", kana: "や", meaning: "呀" }, { romaji: "yu", kana: "ゆ", meaning: "优" }, { romaji: "yo", kana: "よ", meaning: "哟" }] },
+        { name: "ら行", items: [{ romaji: "ra", kana: "ら", meaning: "拉" }, { romaji: "ri", kana: "り", meaning: "丽" }, { romaji: "ru", kana: "る", meaning: "鲁" }, { romaji: "re", kana: "れ", meaning: "来" }, { romaji: "ro", kana: "ろ", meaning: "咯" }] },
+        { name: "わ行", items: [{ romaji: "wa", kana: "わ", meaning: "哇" }, { romaji: "wo", kana: "を", meaning: "哦(宾)" }] },
+        { name: "拨音", items: [{ romaji: "n", kana: "ん", meaning: "嗯" }] },
+      ]
+    };
+
+    // 片假名数据
+    const kataData = {
+      groups: [
+        { name: "ア行", items: [{ romaji: "a", kana: "ア", meaning: "啊" }, { romaji: "i", kana: "イ", meaning: "一" }, { romaji: "u", kana: "ウ", meaning: "乌" }, { romaji: "e", kana: "エ", meaning: "诶" }, { romaji: "o", kana: "オ", meaning: "哦" }] },
+        { name: "カ行", items: [{ romaji: "ka", kana: "カ", meaning: "咖" }, { romaji: "ki", kana: "キ", meaning: "key" }, { romaji: "ku", kana: "ク", meaning: "库" }, { romaji: "ke", kana: "ケ", meaning: "开" }, { romaji: "ko", kana: "コ", meaning: "抠" }] },
+        { name: "サ行", items: [{ romaji: "sa", kana: "サ", meaning: "撒" }, { romaji: "shi", kana: "シ", meaning: "吸" }, { romaji: "su", kana: "ス", meaning: "思" }, { romaji: "se", kana: "セ", meaning: "塞" }, { romaji: "so", kana: "ソ", meaning: "搜" }] },
+        { name: "タ行", items: [{ romaji: "ta", kana: "タ", meaning: "他" }, { romaji: "chi", kana: "チ", meaning: "七" }, { romaji: "tsu", kana: "ツ", meaning: "次" }, { romaji: "te", kana: "テ", meaning: "忒" }, { romaji: "to", kana: "ト", meaning: "托" }] },
+        { name: "ナ行", items: [{ romaji: "na", kana: "ナ", meaning: "那" }, { romaji: "ni", kana: "ニ", meaning: "泥" }, { romaji: "nu", kana: "ヌ", meaning: "努" }, { romaji: "ne", kana: "ネ", meaning: "内" }, { romaji: "no", kana: "ノ", meaning: "诺" }] },
+        { name: "ハ行", items: [{ romaji: "ha", kana: "ハ", meaning: "哈" }, { romaji: "hi", kana: "ヒ", meaning: "黑" }, { romaji: "fu", kana: "フ", meaning: "夫" }, { romaji: "he", kana: "ヘ", meaning: "黑(敬)" }, { romaji: "ho", kana: "ホ", meaning: "厚" }] },
+        { name: "マ行", items: [{ romaji: "ma", kana: "マ", meaning: "妈" }, { romaji: "mi", kana: "ミ", meaning: "米" }, { romaji: "mu", kana: "ム", meaning: "木" }, { romaji: "me", kana: "メ", meaning: "妹" }, { romaji: "mo", kana: "モ", meaning: "摸" }] },
+        { name: "ヤ行", items: [{ romaji: "ya", kana: "ヤ", meaning: "呀" }, { romaji: "yu", kana: "ユ", meaning: "优" }, { romaji: "yo", kana: "ヨ", meaning: "哟" }] },
+        { name: "ラ行", items: [{ romaji: "ra", kana: "ラ", meaning: "拉" }, { romaji: "ri", kana: "リ", meaning: "丽" }, { romaji: "ru", kana: "ル", meaning: "鲁" }, { romaji: "re", kana: "レ", meaning: "来" }, { romaji: "ro", kana: "ロ", meaning: "咯" }] },
+        { name: "ワ行", items: [{ romaji: "wa", kana: "ワ", meaning: "哇" }, { romaji: "wo", kana: "ヲ", meaning: "哦(宾)" }] },
+        { name: "拨音", items: [{ romaji: "n", kana: "ン", meaning: "嗯" }] },
+      ]
+    };
+
+    // 浊音数据（平假名）
+    const dakuonData = {
+      groups: [
+        { name: "が行", items: [{ romaji: "ga", kana: "が", meaning: "嘎" }, { romaji: "gi", kana: "ぎ", meaning: "给" }, { romaji: "gu", kana: "ぐ", meaning: "古" }, { romaji: "ge", kana: "げ", meaning: "给(开)" }, { romaji: "go", kana: "ご", meaning: "狗" }] },
+        { name: "ざ行", items: [{ romaji: "za", kana: "ざ", meaning: "杂" }, { romaji: "ji", kana: "じ", meaning: "鸡" }, { romaji: "zu", kana: "ず", meaning: "兹" }, { romaji: "ze", kana: "ぜ", meaning: "贼" }, { romaji: "zo", kana: "ぞ", meaning: "走" }] },
+        { name: "だ行", items: [{ romaji: "da", kana: "だ", meaning: "大" }, { romaji: "di", kana: "ぢ", meaning: "地" }, { romaji: "du", kana: "づ", meaning: "杜" }, { romaji: "de", kana: "で", meaning: "嘚" }, { romaji: "do", kana: "ど", meaning: "豆" }] },
+        { name: "ば行", items: [{ romaji: "ba", kana: "ば", meaning: "八" }, { romaji: "bi", kana: "び", meaning: "比" }, { romaji: "bu", kana: "ぶ", meaning: "不" }, { romaji: "be", kana: "べ", meaning: "背" }, { romaji: "bo", kana: "ぼ", meaning: "波" }] },
+        { name: "半浊音", items: [{ romaji: "pa", kana: "ぱ", meaning: "趴" }, { romaji: "pi", kana: "ぴ", meaning: "批" }, { romaji: "pu", kana: "ぷ", meaning: "铺" }, { romaji: "pe", kana: "ぺ", meaning: "沛" }, { romaji: "po", kana: "ぽ", meaning: "破" }] },
+      ]
+    };
+
+    // 浊音片假名
+    const dakuonKataData = {
+      groups: [
+        { name: "ガ行", items: [{ romaji: "ga", kana: "ガ", meaning: "嘎" }, { romaji: "gi", kana: "ギ", meaning: "给" }, { romaji: "gu", kana: "グ", meaning: "古" }, { romaji: "ge", kana: "ゲ", meaning: "给(开)" }, { romaji: "go", kana: "ゴ", meaning: "狗" }] },
+        { name: "ザ行", items: [{ romaji: "za", kana: "ザ", meaning: "杂" }, { romaji: "ji", kana: "ジ", meaning: "鸡" }, { romaji: "zu", kana: "ズ", meaning: "兹" }, { romaji: "ze", kana: "ゼ", meaning: "贼" }, { romaji: "zo", kana: "ゾ", meaning: "走" }] },
+        { name: "ダ行", items: [{ romaji: "da", kana: "ダ", meaning: "大" }, { romaji: "di", kana: "ヂ", meaning: "地" }, { romaji: "du", kana: "ヅ", meaning: "杜" }, { romaji: "de", kana: "デ", meaning: "嘚" }, { romaji: "do", kana: "ド", meaning: "豆" }] },
+        { name: "バ行", items: [{ romaji: "ba", kana: "バ", meaning: "八" }, { romaji: "bi", kana: "ビ", meaning: "比" }, { romaji: "bu", kana: "ブ", meaning: "不" }, { romaji: "be", kana: "ベ", meaning: "背" }, { romaji: "bo", kana: "ボ", meaning: "波" }] },
+        { name: "半浊音", items: [{ romaji: "pa", kana: "パ", meaning: "趴" }, { romaji: "pi", kana: "ピ", meaning: "批" }, { romaji: "pu", kana: "プ", meaning: "铺" }, { romaji: "pe", kana: "ペ", meaning: "沛" }, { romaji: "po", kana: "ポ", meaning: "破" }] },
+      ]
+    };
+
+    // 拗音数据（平假名）
+    const youonData = {
+      groups: [
+        { name: "か行", items: [{ romaji: "kya", kana: "きゃ", meaning: "卡呀" }, { romaji: "kyu", kana: "きゅ", meaning: "Q" }, { romaji: "kyo", kana: "きょ", meaning: "扣呀" }] },
+        { name: "さ行", items: [{ romaji: "sha", kana: "しゃ", meaning: "虾" }, { romaji: "shu", kana: "しゅ", meaning: "书" }, { romaji: "sho", kana: "しょ", meaning: "少" }] },
+        { name: "た行", items: [{ romaji: "cha", kana: "ちゃ", meaning: "掐" }, { romaji: "chu", kana: "ちゅ", meaning: "秋" }, { romaji: "cho", kana: "ちょ", meaning: "敲" }] },
+        { name: "な行", items: [{ romaji: "nya", kana: "にゃ", meaning: "娘" }, { romaji: "nyu", kana: "にゅ", meaning: "扭" }, { romaji: "nyo", kana: "にょ", meaning: "鸟" }] },
+        { name: "は行", items: [{ romaji: "hya", kana: "ひゃ", meaning: "喝呀" }, { romaji: "hyu", kana: "ひゅ", meaning: "休" }, { romaji: "hyo", kana: "ひょ", meaning: "hyoo" }] },
+        { name: "ま行", items: [{ romaji: "mya", kana: "みゃ", meaning: "咪呀" }, { romaji: "myu", kana: "みゅ", meaning: "谬" }, { romaji: "myo", kana: "みょ", meaning: "秒" }] },
+        { name: "ら行", items: [{ romaji: "rya", kana: "りゃ", meaning: "利亚" }, { romaji: "ryu", kana: "りゅ", meaning: "留" }, { romaji: "ryo", kana: "りょ", meaning: "辽" }] },
+        { name: "ぎゃ", items: [{ romaji: "gya", kana: "ぎゃ", meaning: "嘎呀" }, { romaji: "gyu", kana: "ぎゅ", meaning: "久" }, { romaji: "gyo", kana: "ぎょ", meaning: "救" }] },
+        { name: "じゃ", items: [{ romaji: "ja", kana: "じゃ", meaning: "加" }, { romaji: "ju", kana: "じゅ", meaning: "旧" }, { romaji: "jo", kana: "じょ", meaning: "女" }] },
+        { name: "びゃ", items: [{ romaji: "bya", kana: "びゃ", meaning: "逼呀" }, { romaji: "byu", kana: "びゅ", meaning: "逼尤" }, { romaji: "byo", kana: "びょ", meaning: "表" }] },
+        { name: "ぴゃ", items: [{ romaji: "pya", kana: "ぴゃ", meaning: "批呀" }, { romaji: "pyu", kana: "ぴゅ", meaning: "皮尤" }, { romaji: "pyo", kana: "ぴょ", meaning: "飘" }] },
+      ]
+    };
+
+    // 拗音片假名
+    const youonKataData = {
+      groups: [
+        { name: "キャ", items: [{ romaji: "kya", kana: "キャ", meaning: "卡呀" }, { romaji: "kyu", kana: "キュ", meaning: "Q" }, { romaji: "kyo", kana: "キョ", meaning: "扣呀" }] },
+        { name: "シャ", items: [{ romaji: "sha", kana: "シャ", meaning: "虾" }, { romaji: "shu", kana: "シュ", meaning: "书" }, { romaji: "sho", kana: "ショ", meaning: "少" }] },
+        { name: "チャ", items: [{ romaji: "cha", kana: "チャ", meaning: "掐" }, { romaji: "chu", kana: "チュ", meaning: "秋" }, { romaji: "cho", kana: "チョ", meaning: "敲" }] },
+        { name: "ニャ", items: [{ romaji: "nya", kana: "ニャ", meaning: "娘" }, { romaji: "nyu", kana: "ニュ", meaning: "扭" }, { romaji: "nyo", kana: "ニョ", meaning: "鸟" }] },
+        { name: "ヒャ", items: [{ romaji: "hya", kana: "ヒャ", meaning: "喝呀" }, { romaji: "hyu", kana: "ヒュ", meaning: "休" }, { romaji: "hyo", kana: "ヒョ", meaning: "hyoo" }] },
+        { name: "ミャ", items: [{ romaji: "mya", kana: "ミャ", meaning: "咪呀" }, { romaji: "myu", kana: "ミュ", meaning: "谬" }, { romaji: "myo", kana: "ミョ", meaning: "秒" }] },
+        { name: "リャ", items: [{ romaji: "rya", kana: "リャ", meaning: "利亚" }, { romaji: "ryu", kana: "リュ", meaning: "留" }, { romaji: "ryo", kana: "リョ", meaning: "辽" }] },
+        { name: "ギャ", items: [{ romaji: "gya", kana: "ギャ", meaning: "嘎呀" }, { romaji: "gyu", kana: "ギュ", meaning: "久" }, { romaji: "gyo", kana: "ギョ", meaning: "救" }] },
+        { name: "ジャ", items: [{ romaji: "ja", kana: "ジャ", meaning: "加" }, { romaji: "ju", kana: "ジュ", meaning: "旧" }, { romaji: "jo", kana: "ジョ", meaning: "女" }] },
+        { name: "ビャ", items: [{ romaji: "bya", kana: "ビャ", meaning: "逼呀" }, { romaji: "byu", kana: "ビュ", meaning: "逼尤" }, { romaji: "byo", kana: "ビョ", meaning: "表" }] },
+        { name: "ピャ", items: [{ romaji: "pya", kana: "ピャ", meaning: "批呀" }, { romaji: "pyu", kana: "ピュ", meaning: "皮尤" }, { romaji: "pyo", kana: "ピョ", meaning: "飘" }] },
+      ]
+    };
+
+    // 促音数据（平假名）
+    const sokuonData = {
+      items: [
+        { romaji: "kka", kana: "っか", meaning: "咖" },
+        { romaji: "kki", kana: "っき", meaning: "key" },
+        { romaji: "kku", kana: "っく", meaning: "哭" },
+        { romaji: "tte", kana: "って", meaning: "忒" },
+        { romaji: "tto", kana: "っと", meaning: "托" },
+        { romaji: "ssu", kana: "っす", meaning: "司" },
+        { romaji: "ppa", kana: "っぱ", meaning: "趴" },
+      ]
+    };
+
+    // 促音数据（片假名）
+    const sokuonKataData = {
+      items: [
+        { romaji: "kka", kana: "ッカ", meaning: "咖" },
+        { romaji: "kki", kana: "ッキ", meaning: "key" },
+        { romaji: "kku", kana: "ック", meaning: "哭" },
+        { romaji: "tte", kana: "ッテ", meaning: "忒" },
+        { romaji: "tto", kana: "ット", meaning: "托" },
+        { romaji: "ssu", kana: "ッス", meaning: "司" },
+        { romaji: "ppa", kana: "ッパ", meaning: "趴" },
+      ]
+    };
+
+    // ========== 状态 ==========
+    let currentKanaType = 'hira'; // hira | kata
+    let currentMode = 'challenge'; // challenge | learn
+    let currentStage = 'seion';
+    
+    let itemStates = {};
+    let itemsList = [];
+    let currentItem = null;
+    
+    let totalAttempts = 0;
+    let maxStreak = 0;
+    let currentStreak = 0;
+    let startTime = null;
+    let isComplete = false;
+    let answerShown = false; // 追踪是否已显示答案
+    
+    // 血量系统
+    let health = 3;
+    const MAX_HEALTH = 3;
+
+    // ========== DOM元素 ==========
+    const kanaDisplay = document.getElementById('kanaDisplay');
+    const meaningDisplay = document.getElementById('meaningDisplay');
+    const hintText = document.getElementById('hintText');
+    const typingInput = document.getElementById('typingInput');
+    const progressGrid = document.getElementById('progressGrid');
+    const comboOverlay = document.getElementById('comboOverlay');
+    const correctPopup = document.getElementById('correctPopup');
+
+    // ========== 函数 ==========
+    
+    // 获取当前阶段的数据
+    function getCurrentData() {
+      const isKata = currentKanaType === 'kata';
+      const seion = isKata ? kataData : seionData;
+      const dakuon = isKata ? dakuonKataData : dakuonData;
+      const youon = isKata ? youonKataData : youonData;
+      const sokuon = isKata ? sokuonKataData : sokuonData;
+      
+      return { seion, dakuon, youon, sokuon };
+    }
+
+    // 初始化词条状态
+    function initItemStates(stage) {
+      const { seion, dakuon, youon, sokuon } = getCurrentData();
+      let items = [];
+      
+      if (stage === 'all') {
+        seion.groups.forEach(g => items.push(...g.items));
+        dakuon.groups.forEach(g => items.push(...g.items));
+        youon.groups.forEach(g => items.push(...g.items));
+        sokuon.items.forEach(item => items.push(item));
+      } else if (stage === 'seion') {
+        seion.groups.forEach(g => items.push(...g.items));
+      } else if (stage === 'dakuon') {
+        dakuon.groups.forEach(g => items.push(...g.items));
+      } else if (stage === 'youon') {
+        youon.groups.forEach(g => items.push(...g.items));
+      } else if (stage === 'sokuon') {
+        items = sokuon.items;
+      }
+
+      // 去重
+      const uniqueItems = [];
+      const seen = new Set();
+      items.forEach(item => {
+        if (!seen.has(item.romaji)) {
+          seen.add(item.romaji);
+          uniqueItems.push(item);
+        }
+      });
+
+      itemsList = uniqueItems;
+
+      // 初始化状态
+      itemStates = {};
+      itemsList.forEach(item => {
+        itemStates[item.romaji] = { correct: 0, wrong: 0 };
+      });
+
+      renderProgressGrid();
+      updateStats();
+    }
+
+    // 渲染进度点
+    function renderProgressGrid() {
+      progressGrid.innerHTML = '';
+      itemsList.forEach((item) => {
+        const state = itemStates[item.romaji];
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        
+        if (state.correct >= 3) {
+          dot.classList.add('mastered');
+        } else if (state.wrong > 0) {
+          dot.classList.add('wrong');
+        } else if (state.correct > 0) {
+          dot.classList.add('learning');
+        }
+        
+        progressGrid.appendChild(dot);
+      });
+    }
+
+    // 更新统计
+    function updateStats() {
+      let mastered = 0, learning = 0;
+      
+      itemsList.forEach(item => {
+        const state = itemStates[item.romaji];
+        if (state.correct >= 3) {
+          mastered++;
+        } else if (state.correct > 0 || state.wrong > 0) {
+          learning++;
+        }
+      });
+
+      document.getElementById('masteredCount').textContent = mastered;
+      document.getElementById('learningCount').textContent = learning;
+      document.getElementById('totalItems').textContent = itemsList.length;
+      document.getElementById('streakCount').textContent = currentStreak;
+
+      // 进度条
+      const percent = itemsList.length > 0 ? Math.round((mastered / itemsList.length) * 100) : 0;
+      document.getElementById('progressPercent').textContent = percent + '%';
+      document.getElementById('progressFill').style.width = percent + '%';
+    }
+
+    // 获取下一个待练习的词条（根据自适应算法）
+    function getNextItem() {
+      const unmastered = itemsList.filter(item => itemStates[item.romaji].correct < 3);
+      
+      if (unmastered.length === 0) {
+        return null;
+      }
+
+      const weighted = unmastered.map(item => {
+        const state = itemStates[item.romaji];
+        let weight = 1;
+        weight += state.wrong * 2;
+        weight = Math.max(1, weight - state.correct * 0.5);
+        return { item, weight };
+      });
+
+      const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
+      let random = Math.random() * totalWeight;
+      
+      for (const w of weighted) {
+        random -= w.weight;
+        if (random <= 0) {
+          return w.item;
+        }
+      }
+
+      return weighted[0].item;
+    }
+
+    // 更新界面显示当前词条
+    function updateDisplay() {
+      currentItem = getNextItem();
+      answerShown = false;
+      
+      if (!currentItem) {
+        showComplete();
+        return;
+      }
+
+      // 添加弹出动画
+      kanaDisplay.classList.remove('pop');
+      void kanaDisplay.offsetWidth; // 触发重排
+      kanaDisplay.classList.add('pop');
+
+      kanaDisplay.textContent = currentItem.kana;
+      
+      // 学习模式：开始就显示意思；挑战模式：隐藏意思
+      if (currentMode === 'learn') {
+        meaningDisplay.textContent = currentItem.meaning;
+        meaningDisplay.classList.add('show');
+      } else {
+        meaningDisplay.textContent = '';
+        meaningDisplay.classList.remove('show');
+      }
+      
+      hintText.textContent = '输入罗马字后按空格确认';
+      hintText.classList.remove('correct', 'wrong');
+      
+      typingInput.value = '';
+      typingInput.focus();
+    }
+
+    // 显示答案
+    function showAnswer() {
+      if (!currentItem || answerShown) return;
+      answerShown = true;
+      
+      meaningDisplay.textContent = currentItem.meaning;
+      meaningDisplay.classList.add('show');
+      
+      hintText.textContent = `答案: ${currentItem.romaji}`;
+      hintText.classList.add('wrong');
+    }
+
+    // 显示连击效果
+    function showCombo(count) {
+      comboOverlay.textContent = count + ' COMBO!';
+      comboOverlay.classList.remove('show');
+      void comboOverlay.offsetWidth;
+      comboOverlay.classList.add('show');
+      playSound('combo');
+    }
+
+    // 显示正确提示
+    function showCorrectPopup() {
+      correctPopup.classList.remove('show');
+      void correctPopup.offsetWidth;
+      correctPopup.classList.add('show');
+    }
+
+    // 检查答案
+    function checkAnswer(input, target) {
+      return input.toLowerCase().trim() === target.toLowerCase().trim();
+    }
+
+    // 切换假名类型
+    function setKanaType(type) {
+      currentKanaType = type;
+      document.getElementById('btnHira').classList.toggle('active', type === 'hira');
+      document.getElementById('btnKata').classList.toggle('active', type === 'kata');
+      initItemStates(currentStage);
+      updateDisplay();
+    }
+
+    // 切换模式
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeChallenge').classList.toggle('active', mode === 'challenge');
+      document.getElementById('modeLearn').classList.toggle('active', mode === 'learn');
+      document.getElementById('learnModeHint').style.display = mode === 'learn' ? 'block' : 'none';
+      document.getElementById('challengeHint').style.display = mode === 'challenge' ? 'flex' : 'none';
+      
+      // 挑战模式显示血量，学习模式隐藏
+      document.getElementById('healthBar').style.display = mode === 'challenge' ? 'flex' : 'none';
+      
+      // 更新快捷键提示
+      const tipText = document.getElementById('tipText');
+      if (mode === 'learn') {
+        tipText.innerHTML = '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>Enter</kbd> 跳过';
+      } else {
+        tipText.innerHTML = '<kbd>空格</kbd> 确认';
+      }
+      
+      // 重置血量
+      health = MAX_HEALTH;
+      updateHealthDisplay();
+      
+      // 重置统计
+      totalAttempts = 0;
+      maxStreak = 0;
+      currentStreak = 0;
+      startTime = Date.now();
+    }
+    
+    // 更新血量显示
+    function updateHealthDisplay() {
+      const hearts = document.querySelectorAll('.heart');
+      hearts.forEach((heart, index) => {
+        const heartIndex = index + 1;
+        if (heartIndex <= health) {
+          heart.classList.add('full');
+          heart.classList.remove('empty');
+          heart.textContent = '❤️';
+        } else {
+          heart.classList.remove('full');
+          heart.classList.add('empty');
+          heart.textContent = '🖤';
+        }
+      });
+    }
+    
+    // 失去一条血
+    function loseHealth() {
+      if (health > 0) {
+        const hearts = document.querySelectorAll('.heart');
+        const losingHeart = hearts[health - 1];
+        losingHeart.classList.add('losing');
+        setTimeout(() => {
+          losingHeart.classList.remove('losing');
+        }, 500);
+        health--;
+        updateHealthDisplay();
+      }
+      
+      if (health <= 0) {
+        showFailOverlay();
+      }
+    }
+    
+    // 显示失败弹窗
+    function showFailOverlay() {
+      isComplete = true;
+      document.getElementById('failAttempts').textContent = totalAttempts;
+      document.getElementById('failStreak').textContent = maxStreak;
+      document.getElementById('failOverlay').classList.add('show');
+      playSound('wrong');
+    }
+    
+    // 切换到学习模式
+    function switchToLearnMode() {
+      document.getElementById('failOverlay').classList.remove('show');
+      setMode('learn');
+      restartPractice();
+    }
+    
+    // 重新挑战
+    function restartChallenge() {
+      document.getElementById('failOverlay').classList.remove('show');
+      setMode('challenge');
+      restartPractice();
+    }
+
+    // 切换阶段
+    function switchStage(stage) {
+      currentStage = stage;
+      document.querySelectorAll('.stage-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.stage === stage);
+      });
+      totalAttempts = 0;
+      maxStreak = 0;
+      currentStreak = 0;
+      isComplete = false;
+      startTime = Date.now();
+      
+      initItemStates(stage);
+      document.getElementById('practiceArea').style.display = 'block';
+      document.getElementById('completeScreen').classList.remove('show');
+      updateDisplay();
+    }
+
+    // 处理键盘事件
+    typingInput.addEventListener('keydown', function(e) {
+      if (isComplete) return;
+
+      // 空格键：确认答案
+      if (e.key === ' ') {
+        e.preventDefault();
+        submitAnswer();
+      }
+      
+      // Tab键：显示答案（仅学习模式）
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        if (currentMode === 'learn') {
+          showAnswer();
+        } else {
+          // 挑战模式按Tab视为放弃当前题，扣血
+          loseHealth();
+          if (health > 0) {
+            updateDisplay();
+          }
+        }
+      }
+
+      // Enter键：跳过（仅学习模式）
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (currentMode === 'learn') {
+          playSound('skip');
+          updateDisplay();
+        }
+        // 挑战模式不可跳过
+      }
+    });
+
+    // 提交答案
+    function submitAnswer() {
+      const input = typingInput.value.trim();
+      if (!input || !currentItem) return;
+
+      totalAttempts++;
+      const state = itemStates[currentItem.romaji];
+      const isCorrect = checkAnswer(input, currentItem.romaji);
+
+      if (isCorrect) {
+        state.correct++;
+        currentStreak++;
+        if (currentStreak > maxStreak) maxStreak = currentStreak;
+        
+        typingInput.classList.add('correct');
+        hintText.textContent = '✓ 正确！';
+        hintText.classList.add('correct');
+        
+        // 显示释义
+        meaningDisplay.textContent = currentItem.meaning;
+        meaningDisplay.classList.add('show');
+        
+        // 播放音效
+        playSound('correct');
+        showCorrectPopup();
+        
+        // 连击效果
+        if (currentStreak >= 3) {
+          showCombo(currentStreak);
+        }
+        
+        setTimeout(() => {
+          typingInput.classList.remove('correct');
+          updateDisplay();
+          renderProgressGrid();
+          updateStats();
+        }, 500);
+      } else {
+        state.wrong++;
+        currentStreak = 0;
+        
+        typingInput.classList.add('wrong');
+        playSound('wrong');
+        
+        if (currentMode === 'learn') {
+          meaningDisplay.textContent = currentItem.meaning;
+          meaningDisplay.classList.add('show');
+          hintText.textContent = `✗ 正确答案是: ${currentItem.romaji}`;
+          hintText.classList.add('wrong');
+          
+          setTimeout(() => {
+            typingInput.classList.remove('wrong');
+            typingInput.value = '';
+            typingInput.focus();
+          }, 600);
+        } else {
+          // 挑战模式答错扣血
+          hintText.textContent = `✗ 正确答案是: ${currentItem.romaji}`;
+          hintText.classList.add('wrong');
+          meaningDisplay.textContent = currentItem.meaning;
+          meaningDisplay.classList.add('show');
+          loseHealth();
+          
+          setTimeout(() => {
+            if (health > 0) {
+              typingInput.classList.remove('wrong');
+              updateDisplay();
+            }
+          }, 1000);
+        }
+      }
+    }
+
+    // 完成后显示
+    function showComplete() {
+      isComplete = true;
+      document.getElementById('practiceArea').style.display = 'none';
+      document.getElementById('completeScreen').classList.add('show');
+
+      const endTime = Date.now();
+      const timeUsed = Math.round((endTime - startTime) / 1000);
+
+      document.getElementById('finalStreak').textContent = maxStreak;
+      document.getElementById('finalAttempts').textContent = totalAttempts;
+      document.getElementById('finalTime').textContent = timeUsed + 's';
+      
+      playSound('complete');
+    }
+
+    // 重新开始
+    function restartPractice() {
+      switchStage(currentStage);
+    }
+
+
+    // ========== 初始化 ==========
+    initItemStates('seion');
+    // 默认显示挑战模式
+    setMode('challenge');
+    updateDisplay();
+    startTime = Date.now();
+  </script>
+</body>
+</html>
