@@ -290,7 +290,7 @@
       </a>
 
       <!-- 常用词 -->
-      <div class="module-card locked" id="cardWords">
+      <a href="words.html" class="module-card" id="cardWords">
         <span class="module-icon">📖</span>
         <div class="module-name">常用词汇</div>
         <div class="module-desc">日语日常高频词汇罗马字输入练习</div>
@@ -299,12 +299,13 @@
             <circle class="bg" cx="40" cy="40" r="34"/>
             <circle class="fill" cx="40" cy="40" r="34"
               stroke-dasharray="213.6"
-              stroke-dashoffset="213.6"/>
+              stroke-dashoffset="213.6"
+              id="ringWordsCircle"/>
           </svg>
-          <span class="module-progress-text">🔒</span>
+          <span class="module-progress-text" id="textWordsPct">0%</span>
         </div>
-        <div class="module-status">敬请期待</div>
-      </div>
+        <div class="module-status" id="statusWords">未开始</div>
+      </a>
 
       <!-- 常用句 -->
       <div class="module-card locked" id="cardSentences">
@@ -374,6 +375,9 @@
     };
     const KANA_TOTAL = Object.values(STAGE_TOTALS).reduce((a, b) => a + b, 0); // ≈ 114
 
+    // 词汇总词条数（N5 + N4）
+    const WORDS_TOTAL = 580; // N5约380 + N4约200
+
     function getStageProgress(stage) {
       const key = 'jtp_kana_' + stage;
       try {
@@ -426,15 +430,83 @@
         statusEl.className = 'module-status';
       }
 
-      // 总体进度
-      document.getElementById('overallFill').style.width = pct + '%';
-      document.getElementById('overallPercent').textContent = pct + '%';
-      document.getElementById('statMastered').textContent = mastered;
+      return mastered;
+    }
+
+    function renderWordsProgress() {
+      // 读取各级别的词汇进度
+      const levels = ['n5', 'n4'];
+      let totalMastered = 0;
+      let totalItems = 0;
+
+      levels.forEach(function(level) {
+        const key = 'jtp_words_' + level;
+        try {
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const data = JSON.parse(raw);
+            const mastered = Object.values(data).filter(function(s) { return s.correct >= 3; }).length;
+            totalMastered += mastered;
+          }
+        } catch (e) {}
+      });
+
+      // 估算总词条数（实际从data/words.js读取会更好，这里用估算值）
+      const n5Count = 380;
+      const n4Count = 200;
+      totalItems = n5Count + n4Count;
+
+      const pct = totalItems > 0 ? Math.round((totalMastered / totalItems) * 100) : 0;
+
+      // 圆环进度
+      const circumference = 2 * Math.PI * 34;
+      const offset = circumference - (pct / 100) * circumference;
+      const circle = document.getElementById('ringWordsCircle');
+      if (circle) {
+        circle.style.strokeDashoffset = offset;
+      }
+
+      // 文字
+      const textEl = document.getElementById('textWordsPct');
+      if (textEl) textEl.textContent = pct + '%';
+
+      // 状态文字
+      var statusEl = document.getElementById('statusWords');
+      if (statusEl) {
+        if (totalMastered === 0) {
+          statusEl.textContent = '未开始';
+          statusEl.className = 'module-status';
+        } else if (pct === 100) {
+          statusEl.textContent = '已全部掌握';
+          statusEl.className = 'module-status done';
+        } else {
+          statusEl.textContent = '已掌握 ' + totalMastered + ' / ' + totalItems;
+          statusEl.className = 'module-status';
+        }
+      }
+
+      return totalMastered;
+    }
+
+    function renderOverallProgress() {
+      const kanaMastered = renderKanaProgress();
+      const wordsMastered = renderWordsProgress();
+
+      // 计算总体进度（五十音权重更高）
+      const kanaWeight = 114; // 五十音总词条
+      const wordsWeight = 580; // 词汇总词条
+      const totalWeight = kanaWeight + wordsWeight;
+      const masteredWeight = kanaMastered + wordsMastered * 0.2; // 词汇进度权重减半（因为太多了）
+      const overallPct = Math.round((masteredWeight / totalWeight) * 100);
+
+      document.getElementById('overallFill').style.width = overallPct + '%';
+      document.getElementById('overallPercent').textContent = overallPct + '%';
+      document.getElementById('statMastered').textContent = kanaMastered;
     }
 
     // ===== 初始化 =====
     initGlobalMode();
-    renderKanaProgress();
+    renderOverallProgress();
   </script>
 </body>
 </html>
