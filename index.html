@@ -571,10 +571,64 @@
       min-height: 32px;
       opacity: 0;
       transition: opacity 0.3s ease;
+      position: relative;
+      display: inline-block;
+      cursor: default;
     }
 
     .meaning-display.show {
       opacity: 1;
+    }
+
+    /* 蒙版模糊效果 */
+    .meaning-display.blur-mask {
+      opacity: 1;
+      filter: blur(6px);
+      cursor: pointer;
+      user-select: none;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+    }
+
+    .meaning-display.blur-mask::after {
+      content: '👁 点击/Tab 显示';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+      filter: blur(0);
+      pointer-events: none;
+    }
+
+    .meaning-display.blur-mask.revealed {
+      filter: blur(0);
+      cursor: default;
+    }
+
+    .meaning-display.blur-mask.revealed::after {
+      display: none;
+    }
+
+    /* 蒙版开关按钮 */
+    .blur-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 8px 12px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .blur-toggle.active {
+      color: var(--warning);
+      border-color: var(--warning);
     }
 
     .hint-text {
@@ -883,6 +937,11 @@
           </svg>
           <span>音效</span>
         </div>
+        <!-- 蒙版开关 -->
+        <div class="blur-toggle" id="blurToggle" onclick="toggleBlurMask()">
+          <span>👁</span>
+          <span id="blurToggleText">蒙版关</span>
+        </div>
       </div>
     </div>
 
@@ -1124,6 +1183,34 @@
         toggle.classList.remove('active');
         icon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
       }
+    }
+
+    // ========== 蒙版系统 ==========
+    let blurMaskEnabled = false; // 蒙版模糊开关
+
+    // 切换蒙版开关
+    function toggleBlurMask() {
+      blurMaskEnabled = !blurMaskEnabled;
+      const toggle = document.getElementById('blurToggle');
+      const toggleText = document.getElementById('blurToggleText');
+      if (blurMaskEnabled) {
+        toggle.classList.add('active');
+        toggleText.textContent = '蒙版开';
+      } else {
+        toggle.classList.remove('active');
+        toggleText.textContent = '蒙版关';
+        // 关闭时移除现有蒙版效果
+        meaningDisplay.classList.remove('blur-mask', 'revealed');
+      }
+    }
+
+    // 揭示蒙版（不显示答案，只解除模糊）
+    function revealBlurMask() {
+      if (meaningDisplay.classList.contains('blur-mask') && !meaningDisplay.classList.contains('revealed')) {
+        meaningDisplay.classList.add('revealed');
+        return true; // 表示本次是揭示蒙版操作
+      }
+      return false;
     }
 
     // ========== 数据 ==========
@@ -1420,10 +1507,18 @@
       // 学习模式：开始就显示意思；挑战模式：隐藏意思
       if (currentMode === 'learn') {
         meaningDisplay.textContent = currentItem.meaning;
-        meaningDisplay.classList.add('show');
+        if (blurMaskEnabled) {
+          // 蒙版开启：显示内容但模糊
+          meaningDisplay.classList.remove('revealed');
+          meaningDisplay.classList.add('show', 'blur-mask');
+        } else {
+          // 蒙版关闭：直接显示
+          meaningDisplay.classList.remove('blur-mask', 'revealed');
+          meaningDisplay.classList.add('show');
+        }
       } else {
         meaningDisplay.textContent = '';
-        meaningDisplay.classList.remove('show');
+        meaningDisplay.classList.remove('show', 'blur-mask', 'revealed');
       }
       
       hintText.textContent = '输入罗马字（空格确认 / 手机自动判定）';
@@ -1591,11 +1686,14 @@
         submitAnswer();
       }
 
-      // Tab键：显示答案（仅学习模式）
+      // Tab键：揭示蒙版 / 显示答案（仅学习模式）
       if (e.key === 'Tab') {
         e.preventDefault();
         if (currentMode === 'learn') {
-          showAnswer();
+          // 如果蒙版还没揭示，先揭示蒙版
+          if (!revealBlurMask()) {
+            showAnswer();
+          }
         } else {
           // 挑战模式按Tab视为放弃当前题，扣血
           loseHealth();
@@ -1637,6 +1735,13 @@
     // 移动端：点击输入框时重新聚焦
     typingInput.addEventListener('click', function() {
       this.focus();
+    });
+
+    // 点击释义区域：揭示蒙版
+    meaningDisplay.addEventListener('click', function() {
+      if (currentMode === 'learn') {
+        revealBlurMask();
+      }
     });
 
     // 移动端：点击假名区域激活输入
