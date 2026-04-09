@@ -831,6 +831,19 @@ a {
   box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
 }
 
+.restart-btn.secondary {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.restart-btn.secondary:hover {
+  background: var(--bg);
+  border-color: var(--text-dim);
+  box-shadow: none;
+}
+
 /* ===== 音效开关 ===== */
 .sound-toggle {
   display: flex;
