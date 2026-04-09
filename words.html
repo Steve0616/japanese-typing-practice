@@ -5,37 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>常用词汇 - 日语打字</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-    .coming-soon {
-      text-align: center;
-      padding: 40px;
-    }
-    .coming-soon .icon { font-size: 5rem; margin-bottom: 20px; animation: bounce 1s ease infinite; }
-    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
-    .coming-soon h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--primary); }
-    .coming-soon p { color: var(--text-dim); font-size: 1.1rem; margin-bottom: 30px; }
-    .coming-soon a {
-      display: inline-block;
-      padding: 12px 30px;
-      background: linear-gradient(135deg, var(--primary), #ff8787);
-      color: white;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: all 0.2s;
-    }
-    .coming-soon a:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,107,107,0.4); }
-  </style>
 </head>
 <body>
-  <div class="coming-soon">
-    <div class="icon">📖</div>
-    <h1>常用词汇</h1>
-    <p>日语日常高频词汇练习，正在紧张开发中...</p>
-    <a href="kana.html">先练五十音 →</a>
-    <div style="margin-top:20px;">
-      <a href="index.html" style="background:var(--card-bg);border:1px solid var(--border);color:var(--text-dim);">← 返回主页</a>
+  <div class="container">
+    <div class="nav">
+      <a href="index.html" class="logo" style="text-decoration:none;">← 日语打字</a>
+      <div class="nav-controls">
+        <div class="level-toggle">
+          <button class="level-btn active" id="btnN5" onclick="WordsPractice.setLevel('n5')">N5</button>
+          <button class="level-btn" id="btnN4" onclick="WordsPractice.setLevel('n4')">N4</button>
+          <button class="level-btn" id="btnAll" onclick="WordsPractice.setLevel('all')">全部</button>
+        </div>
+        <div class="mode-switch">
+          <button class="mode-btn active" id="modeChallenge" onclick="WordsPractice.setMode('challenge')">挑战</button>
+          <button class="mode-btn" id="modeLearn" onclick="WordsPractice.setMode('learn')">学习</button>
+        </div>
+        <div class="sound-toggle active" id="soundToggle" onclick="WordsPractice.toggleSound()">
+          <svg viewBox="0 0 24 24" fill="currentColor" id="soundIcon">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <span>音效</span>
+        </div>
+        <div class="blur-toggle" id="blurToggle" onclick="WordsPractice.toggleBlurMask()">
+          <span>👁</span>
+          <span id="blurToggleText">蒙版关</span>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <h1 id="headerTitle">常用词汇练习</h1>
+      <p id="headerDesc">看日语单词 → 输入罗马字 → 空格确认</p>
+    </header>
+
+    <div class="tips-box">
+      <h3>入门指南</h3>
+      <ul class="tips-list">
+        <li><strong>词条机制：</strong>每个单词需要<span class="tips-highlight">连续答对3次</span>才算掌握，错误会增加出现频率</li>
+        <li><strong>学习模式：</strong>宽松练习，可跳过，显示释义，答错不扣血，适合<span class="tips-highlight">初次熟悉词汇</span></li>
+        <li><strong>挑战模式：</strong>严格考核，不显示释义，不可跳过，答错/放弃扣血，<span class="tips-highlight">3条命</span>，通关即掌握</li>
+        <li><strong>推荐顺序：</strong>先练N5词汇 → 再练N4词汇 → 最后混合练习</li>
+      </ul>
+    </div>
+
+    <div class="learn-mode-hint" id="learnModeHint" style="display: none;">
+      💡 学习模式：宽松练习，可跳过，显示释义，答错不扣血
+    </div>
+
+    <div class="challenge-hint" id="challengeHint" style="display: none;">
+      ⚔️ 挑战模式：严格考核，不显示释义，不可跳过，不可预览答案，3条命
+    </div>
+
+    <div class="health-bar" id="healthBar" style="display: none;">
+      <span class="health-label">生命值</span>
+      <div class="health-hearts" id="healthHearts">
+        <span class="heart full" data-index="1">❤️</span>
+        <span class="heart full" data-index="2">❤️</span>
+        <span class="heart full" data-index="3">❤️</span>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item"><div class="stat-value" id="masteredCount">0</div><div class="stat-label">已掌握</div></div>
+      <div class="stat-item"><div class="stat-value" id="learningCount">0</div><div class="stat-label">学习中</div></div>
+      <div class="stat-item"><div class="stat-value" id="totalItems">0</div><div class="stat-label">总词条</div></div>
+      <div class="stat-item"><div class="stat-value" id="streakCount">0</div><div class="stat-label">当前连续</div></div>
+    </div>
+
+    <div class="progress-grid" id="progressGrid"></div>
+    <div class="combo-overlay" id="comboOverlay"></div>
+    <div class="correct-popup" id="correctPopup">✓</div>
+
+    <div class="master-progress">
+      <div class="master-progress-label">
+        <span>掌握进度</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="practice-area" id="practiceArea">
+      <div class="kana-display" id="kanaDisplay">日本</div>
+      <div class="meaning-display" id="meaningDisplay"></div>
+      <div class="hint-text" id="hintText">输入罗马字后按空格确认</div>
+      <div class="input-area">
+        <input type="text" class="typing-input" id="typingInput" placeholder="输入罗马字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="tip" id="tipText"><kbd>空格</kbd> 确认</div>
+    </div>
+
+    <div class="fail-overlay" id="failOverlay">
+      <div class="fail-modal">
+        <div class="fail-avatar">
+          <img src="avatar.png" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </div>
+        <div class="fail-title">菜就多练</div>
+        <div class="fail-subtitle">—— 小马</div>
+        <div class="fail-stats">
+          <div class="fail-stat"><div class="value" id="failAttempts">0</div><div class="label">总尝试</div></div>
+          <div class="fail-stat"><div class="value" id="failStreak">0</div><div class="label">最高连续</div></div>
+        </div>
+        <div class="fail-buttons">
+          <button class="fail-btn secondary" onclick="WordsPractice.switchToLearnMode()">去学习模式</button>
+          <button class="fail-btn primary" onclick="WordsPractice.restartChallenge()">重新挑战</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="complete-screen" id="completeScreen">
+      <div class="complete-icon">🎉</div>
+      <h2>恭喜通关！</h2>
+      <p style="color:var(--text-dim);margin-bottom:30px;">你已经掌握所有词汇</p>
+      <div class="complete-stats">
+        <div class="complete-stat"><div class="value" id="finalStreak">0</div><div class="label">最高连续</div></div>
+        <div class="complete-stat"><div class="value" id="finalAttempts">0</div><div class="label">总尝试</div></div>
+        <div class="complete-stat"><div class="value" id="finalTime">0s</div><div class="label">用时</div></div>
+      </div>
+      <button class="restart-btn" onclick="WordsPractice.restartPractice()">再练一遍</button>
     </div>
   </div>
+
+  <script src="data/words.js"></script>
+  <script src="js/words.js"></script>
+  <script>
+    // 初始化词汇练习模块
+    document.addEventListener('DOMContentLoaded', function() {
+      WordsPractice.init({
+        kanaDisplay: document.getElementById('kanaDisplay'),
+        meaningDisplay: document.getElementById('meaningDisplay'),
+        hintText: document.getElementById('hintText'),
+        typingInput: document.getElementById('typingInput'),
+        progressGrid: document.getElementById('progressGrid'),
+        comboOverlay: document.getElementById('comboOverlay'),
+        correctPopup: document.getElementById('correctPopup')
+      });
+    });
+  </script>
 </body>
 </html>
