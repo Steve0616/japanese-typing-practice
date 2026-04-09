@@ -116,14 +116,31 @@
     blurMaskEnabled = !blurMaskEnabled;
     var t = document.getElementById('blurToggle'), tt = document.getElementById('blurToggleText');
     if (blurMaskEnabled) {
-      t.classList.add('active');
-      tt.textContent = '蒙版开';
+      if (t) t.classList.add('active');
+      if (tt) tt.textContent = '开';
     } else {
-      t.classList.remove('active');
-      tt.textContent = '蒙版关';
+      if (t) t.classList.remove('active');
+      if (tt) tt.textContent = '关';
       meaningDisplay.classList.remove('blur-mask', 'revealed');
     }
     try { localStorage.setItem('jtp_blur', blurMaskEnabled); } catch (e) {}
+  }
+
+  function toggleSettings() {
+    var p = document.getElementById('settingsPanel'), o = document.getElementById('settingsOverlay');
+    if (p.classList.contains('show')) {
+      p.classList.remove('show');
+      o.classList.remove('show');
+    } else {
+      p.classList.add('show');
+      o.classList.add('show');
+    }
+  }
+
+  function toggleKanaHintFromSettings() {
+    toggleKanaHint();
+    var tt = document.getElementById('kanaHintText');
+    if (tt) tt.textContent = kanaHintEnabled ? '开' : '关';
   }
 
   function revealBlurMask() {
@@ -341,8 +358,8 @@
     document.getElementById('challengeHint').style.display = m === 'challenge' ? 'flex' : 'none';
     document.getElementById('healthBar').style.display = m === 'challenge' ? 'flex' : 'none';
     document.getElementById('tipText').innerHTML = m === 'learn'
-      ? '<kbd>空格</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>Enter</kbd> 跳过'
-      : '<kbd>空格</kbd> 确认';
+      ? '<kbd>回车</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>空格</kbd> 输入'
+      : '<kbd>回车</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>空格</kbd> 输入';
     health = MAX_HEALTH;
     updateHealthDisplay();
     totalAttempts = 0;
@@ -571,6 +588,8 @@
     toggleSound: toggleSound,
     toggleBlurMask: toggleBlurMask,
     toggleKanaHint: toggleKanaHint,
+    toggleKanaHintFromSettings: toggleKanaHintFromSettings,
+    toggleSettings: toggleSettings,
     switchToLearnMode: switchToLearnMode,
     restartChallenge: restartChallenge,
     restartPractice: restartPractice,
