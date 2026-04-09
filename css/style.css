@@ -612,6 +612,15 @@ a {
   display: none;
 }
 
+/* 假名提示显示 */
+.kana-hint-display {
+  font-size: 1.5rem;
+  color: var(--warning);
+  margin-bottom: 10px;
+  opacity: 0.8;
+  min-height: 36px;
+}
+
 /* ===== 蒙版开关按钮 ===== */
 .blur-toggle {
   display: flex;

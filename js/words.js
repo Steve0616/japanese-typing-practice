@@ -86,6 +86,32 @@
   // ============ 蒙版系统 ============
   var blurMaskEnabled = false;
 
+  // ============ 假名提示系统 ============
+  var kanaHintEnabled = false;
+
+  function toggleKanaHint() {
+    kanaHintEnabled = !kanaHintEnabled;
+    var t = document.getElementById('kanaHintToggle'), tt = document.getElementById('kanaHintText');
+    if (kanaHintEnabled) {
+      t.classList.add('active');
+      tt.textContent = '假名提示开';
+    } else {
+      t.classList.remove('active');
+      tt.textContent = '假名提示';
+    }
+    try { localStorage.setItem('jtp_kana_hint', kanaHintEnabled); } catch (e) {}
+    updateDisplay();
+  }
+
+  // ============ 练习数量系统 ============
+  var currentCount = 'all';
+
+  function setCount(count) {
+    currentCount = count;
+    try { localStorage.setItem('jtp_words_count', count); } catch (e) {}
+    restartPractice();
+  }
+
   function toggleBlurMask() {
     blurMaskEnabled = !blurMaskEnabled;
     var t = document.getElementById('blurToggle'), tt = document.getElementById('blurToggleText');
@@ -144,10 +170,26 @@
   }
 
   function getCurrentWords() {
-    if (currentLevel === 'all') return getAllWords();
-    if (currentLevel === 'n5') return getN5Words();
-    if (currentLevel === 'n4') return getN4Words();
-    return getAllWords();
+    var all = [];
+    if (currentLevel === 'all') all = getAllWords();
+    else if (currentLevel === 'n5') all = getN5Words();
+    else if (currentLevel === 'n4') all = getN4Words();
+    
+    // 随机选择指定数量
+    if (currentCount !== 'all' && all.length > currentCount) {
+      all = shuffleArray([...all]).slice(0, parseInt(currentCount));
+    }
+    return all;
+  }
+  
+  function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
   }
 
   function initItemStates() {
@@ -219,6 +261,16 @@
     void kanaDisplay.offsetWidth;
     kanaDisplay.classList.add('pop');
     kanaDisplay.textContent = currentItem.word;
+    
+    // 显示假名提示
+    var kanaHintDisplay = document.getElementById('kanaHintDisplay');
+    if (kanaHintEnabled && currentItem.kana) {
+      kanaHintDisplay.style.display = 'block';
+      kanaHintDisplay.textContent = currentItem.kana;
+    } else {
+      kanaHintDisplay.style.display = 'none';
+    }
+    
     if (currentMode === 'learn') {
       meaningDisplay.textContent = currentItem.meaning;
       if (blurMaskEnabled) {
@@ -455,12 +507,27 @@
       }
     } catch (e) {}
 
+    try {
+      kanaHintEnabled = localStorage.getItem('jtp_kana_hint') === 'true';
+      if (kanaHintEnabled) {
+        document.getElementById('kanaHintToggle').classList.add('active');
+        document.getElementById('kanaHintText').textContent = '假名提示开';
+      }
+    } catch (e) {}
+
+    try {
+      var savedCount = localStorage.getItem('jtp_words_count');
+      if (savedCount) {
+        currentCount = savedCount;
+        document.getElementById('countSelect').value = savedCount;
+      }
+    } catch (e) {}
+
     // 事件绑定
     typingInput.addEventListener('keydown', function(e) {
       if (isComplete) return;
       if (e.key === ' ') {
-        e.preventDefault();
-        submitAnswer();
+        // 空格输入，不拦截
       }
       if (e.key === 'Tab') {
         e.preventDefault();
@@ -473,10 +540,7 @@
       }
       if (e.key === 'Enter') {
         e.preventDefault();
-        if (currentMode === 'learn') {
-          playSound('skip');
-          updateDisplay();
-        }
+        submitAnswer();
       }
     });
 
@@ -503,8 +567,10 @@
     init: init,
     setLevel: setLevel,
     setMode: setMode,
+    setCount: setCount,
     toggleSound: toggleSound,
     toggleBlurMask: toggleBlurMask,
+    toggleKanaHint: toggleKanaHint,
     switchToLearnMode: switchToLearnMode,
     restartChallenge: restartChallenge,
     restartPractice: restartPractice,

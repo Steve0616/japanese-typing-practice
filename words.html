@@ -11,6 +11,13 @@
     <div class="nav">
       <a href="index.html" class="logo" style="text-decoration:none;">← 日语打字</a>
       <div class="nav-controls">
+        <div class="count-select">
+          <select id="countSelect" onchange="WordsPractice.setCount(this.value)">
+            <option value="10">10个</option>
+            <option value="20">20个</option>
+            <option value="all" selected>全部</option>
+          </select>
+        </div>
         <div class="level-toggle">
           <button class="level-btn active" id="btnN5" onclick="WordsPractice.setLevel('n5')">N5</button>
           <button class="level-btn" id="btnN4" onclick="WordsPractice.setLevel('n4')">N4</button>
@@ -30,20 +37,24 @@
           <span>👁</span>
           <span id="blurToggleText">蒙版关</span>
         </div>
+        <div class="kana-hint-toggle" id="kanaHintToggle" onclick="WordsPractice.toggleKanaHint()">
+          <span>あ</span>
+          <span id="kanaHintText">假名提示</span>
+        </div>
       </div>
     </div>
 
     <header>
       <h1 id="headerTitle">常用词汇练习</h1>
-      <p id="headerDesc">看日语单词 → 输入罗马字 → 空格确认</p>
+      <p id="headerDesc">看日语单词 → 输入罗马字 → 回车确认</p>
     </header>
 
     <div class="tips-box">
       <h3>入门指南</h3>
       <ul class="tips-list">
         <li><strong>词条机制：</strong>每个单词需要<span class="tips-highlight">连续答对3次</span>才算掌握，错误会增加出现频率</li>
-        <li><strong>学习模式：</strong>宽松练习，可跳过，显示释义，答错不扣血，适合<span class="tips-highlight">初次熟悉词汇</span></li>
-        <li><strong>挑战模式：</strong>严格考核，不显示释义，不可跳过，答错/放弃扣血，<span class="tips-highlight">3条命</span>，通关即掌握</li>
+        <li><strong>学习模式：</strong>宽松练习，显示释义，答错不扣血，适合<span class="tips-highlight">初次熟悉词汇</span></li>
+        <li><strong>挑战模式：</strong>严格考核，不显示释义，答错/放弃扣血，<span class="tips-highlight">3条命</span>，通关即掌握</li>
         <li><strong>推荐顺序：</strong>先练N5词汇 → 再练N4词汇 → 最后混合练习</li>
       </ul>
     </div>
@@ -88,12 +99,13 @@
 
     <div class="practice-area" id="practiceArea">
       <div class="kana-display" id="kanaDisplay">日本</div>
+      <div class="kana-hint-display" id="kanaHintDisplay" style="display:none;">（あいう）</div>
       <div class="meaning-display" id="meaningDisplay"></div>
-      <div class="hint-text" id="hintText">输入罗马字后按空格确认</div>
+      <div class="hint-text" id="hintText">输入罗马字后按回车确认</div>
       <div class="input-area">
         <input type="text" class="typing-input" id="typingInput" placeholder="输入罗马字" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       </div>
-      <div class="tip" id="tipText"><kbd>空格</kbd> 确认</div>
+      <div class="tip" id="tipText"><kbd>回车</kbd> 确认 &nbsp;|&nbsp; <kbd>Tab</kbd> 显示答案 &nbsp;|&nbsp; <kbd>空格</kbd> 输入</div>
     </div>
 
     <div class="fail-overlay" id="failOverlay">
