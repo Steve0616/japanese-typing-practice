@@ -1,0 +1,893 @@
+/* ===== CSS Variables ===== */
+:root {
+  --primary: #ff6b6b;
+  --success: #51cf66;
+  --warning: #ffd93d;
+  --bg: #0f0f0f;
+  --card-bg: #1a1a1a;
+  --text: #f8f9fa;
+  --text-dim: #868e96;
+  --border: #2d2d2d;
+}
+
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ===== 顶部导航 ===== */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, var(--primary), var(--warning));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.nav-link.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ===== 平假名/片假名切换 ===== */
+.kana-toggle {
+  display: flex;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.kana-toggle-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.kana-toggle-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* ===== 模式切换 ===== */
+.mode-switch {
+  display: flex;
+  gap: 10px;
+}
+
+.mode-btn {
+  padding: 8px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ===== 阶段选项卡 ===== */
+.stage-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.stage-tab {
+  padding: 10px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.stage-tab:hover {
+  border-color: var(--primary);
+}
+
+.stage-tab.active {
+  background: linear-gradient(135deg, var(--primary), #ff8787);
+  color: white;
+  border-color: transparent;
+}
+
+/* ===== 学习模式提示 ===== */
+.learn-mode-hint {
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* ===== Tips说明 ===== */
+.tips-box {
+  background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,217,61,0.1));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.tips-box h3 {
+  font-size: 1rem;
+  color: var(--warning);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tips-box h3::before {
+  content: '💡';
+}
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tips-list li {
+  padding: 8px 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.tips-list li:last-child {
+  border-bottom: none;
+}
+
+.tips-list li::before {
+  content: '•';
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.tips-list strong {
+  color: var(--text);
+}
+
+.tips-highlight {
+  color: var(--success);
+  font-weight: bold;
+}
+
+/* ===== 血量系统 ===== */
+.health-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  background: var(--card-bg);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.health-label {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin-right: 5px;
+}
+
+.health-hearts {
+  display: flex;
+  gap: 6px;
+}
+
+.heart {
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+}
+
+.heart.full {
+  filter: drop-shadow(0 0 4px #ff6b6b);
+}
+
+.heart.empty {
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.heart.losing {
+  animation: loseHeart 0.5s ease-out;
+}
+
+@keyframes loseHeart {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.5; }
+  100% { transform: scale(0.8); opacity: 0.3; filter: grayscale(1); }
+}
+
+/* ===== 失败弹窗 ===== */
+.fail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.fail-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fail-modal {
+  background: var(--card-bg);
+  border: 2px solid var(--primary);
+  border-radius: 20px;
+  padding: 40px 50px;
+  text-align: center;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.fail-overlay.show .fail-modal {
+  transform: scale(1);
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-10px); }
+  80% { transform: translateX(10px); }
+}
+
+.fail-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  overflow: hidden;
+  border: 3px solid var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--warning));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+}
+
+.fail-title {
+  font-size: 1.8rem;
+  color: var(--primary);
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.fail-subtitle {
+  color: var(--text-dim);
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+.fail-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.fail-stat {
+  text-align: center;
+}
+
+.fail-stat .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--warning);
+}
+
+.fail-stat .label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.fail-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.fail-btn {
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.fail-btn.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.fail-btn.secondary {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.fail-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+/* ===== 挑战模式提示 ===== */
+.challenge-hint {
+  background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,107,107,0.05));
+  border: 1px solid var(--primary);
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--primary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ===== 统计面板 ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  background: var(--card-bg);
+  padding: 15px 10px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.stat-label {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* ===== 词条进度点 ===== */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.progress-dot {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: var(--border);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.mastered {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+.progress-dot.learning {
+  background: var(--warning);
+}
+
+.progress-dot.wrong {
+  background: var(--primary);
+}
+
+/* ===== 连击提示 ===== */
+.combo-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: bold;
+  color: var(--success);
+  text-shadow: 0 0 30px var(--success), 0 0 60px var(--success);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 100;
+}
+
+.combo-overlay.show {
+  animation: comboPopup 0.8s ease-out forwards;
+}
+
+@keyframes comboPopup {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  40% { transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(0.8); }
+}
+
+/* ===== 正确提示 ===== */
+.correct-popup {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: var(--success);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 99;
+}
+
+.correct-popup.show {
+  animation: correctPop 0.5s ease-out forwards;
+}
+
+@keyframes correctPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -70%) scale(0.8); }
+}
+
+/* ===== 练习区域 ===== */
+.practice-area {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 50px 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.practice-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--warning), var(--success));
+  opacity: 0.5;
+}
+
+.kana-display {
+  font-size: 8rem;
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 15px;
+  letter-spacing: 12px;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.kana-display.pop {
+  animation: kanaPop 0.2s ease;
+}
+
+@keyframes kanaPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.meaning-display {
+  font-size: 1.3rem;
+  color: var(--text-dim);
+  margin-bottom: 25px;
+  min-height: 32px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  position: relative;
+  display: inline-block;
+  cursor: default;
+}
+
+.meaning-display.show {
+  opacity: 1;
+}
+
+/* 蒙版模糊效果 */
+.meaning-display.blur-mask {
+  opacity: 1;
+  filter: blur(6px);
+  cursor: pointer;
+  user-select: none;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.meaning-display.blur-mask::after {
+  content: '👁 点击/Tab 显示';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  filter: blur(0);
+  pointer-events: none;
+}
+
+.meaning-display.blur-mask.revealed {
+  filter: blur(0);
+  cursor: default;
+}
+
+.meaning-display.blur-mask.revealed::after {
+  display: none;
+}
+
+/* ===== 蒙版开关按钮 ===== */
+.blur-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.blur-toggle.active {
+  color: var(--warning);
+  border-color: var(--warning);
+}
+
+.hint-text {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  margin-bottom: 30px;
+  min-height: 28px;
+}
+
+.hint-text.correct {
+  color: var(--success);
+  font-weight: bold;
+}
+
+.hint-text.wrong {
+  color: var(--primary);
+}
+
+/* ===== 输入区域 ===== */
+.input-area {
+  position: relative;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.typing-input {
+  width: 100%;
+  padding: 18px 25px;
+  font-size: 1.8rem;
+  background: var(--bg);
+  border: 3px solid var(--border);
+  border-radius: 16px;
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+  ime-mode: disabled;
+  letter-spacing: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+.typing-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+}
+
+.typing-input.correct {
+  border-color: var(--success);
+  box-shadow: 0 0 25px rgba(81, 207, 102, 0.5);
+  animation: inputPulse 0.3s ease;
+}
+
+.typing-input.wrong {
+  border-color: var(--primary);
+  animation: shake 0.3s ease;
+}
+
+@keyframes inputPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ===== 底部提示 ===== */
+.tip {
+  margin-top: 20px;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.tip kbd {
+  background: var(--bg);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  font-family: monospace;
+}
+
+/* ===== 底部进度条 ===== */
+.master-progress {
+  margin-top: 20px;
+}
+
+.master-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success), var(--warning));
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 5px;
+}
+
+/* ===== 完成画面 ===== */
+.complete-screen {
+  display: none;
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+.complete-screen.show {
+  display: block;
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.complete-icon {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.complete-screen h2 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--success), var(--warning));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.complete-stats {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.complete-stat {
+  text-align: center;
+  background: var(--bg);
+  padding: 25px 35px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.complete-stat .value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.complete-stat .label {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.restart-btn {
+  background: linear-gradient(135deg, var(--primary), #ff8787);
+  color: white;
+  border: none;
+  padding: 16px 50px;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restart-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+}
+
+/* ===== 音效开关 ===== */
+.sound-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.sound-toggle.active {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.sound-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 600px) {
+  .kana-display {
+    font-size: 5rem;
+  }
+  .progress-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .combo-overlay {
+    font-size: 3.5rem;
+  }
+  .practice-area {
+    padding: 35px 20px;
+  }
+  .typing-input {
+    font-size: 1.5rem;
+    padding: 16px 20px;
+  }
+  .input-area {
+    max-width: 100%;
+  }
+  body {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
