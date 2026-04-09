@@ -115,12 +115,19 @@
   function toggleBlurMask() {
     blurMaskEnabled = !blurMaskEnabled;
     var t = document.getElementById('blurToggle'), tt = document.getElementById('blurToggleText');
+    var ts = document.getElementById('blurToggleSetting'), tts = document.getElementById('blurToggleText');
     if (blurMaskEnabled) {
       if (t) t.classList.add('active');
       if (tt) tt.textContent = '开';
+      if (ts) ts.classList.add('active');
+      if (tts) tts.textContent = '开';
+      meaningDisplay.classList.add('blur-mask');
+      meaningDisplay.classList.remove('revealed');
     } else {
       if (t) t.classList.remove('active');
       if (tt) tt.textContent = '关';
+      if (ts) ts.classList.remove('active');
+      if (tts) tts.textContent = '关';
       meaningDisplay.classList.remove('blur-mask', 'revealed');
     }
     try { localStorage.setItem('jtp_blur', blurMaskEnabled); } catch (e) {}

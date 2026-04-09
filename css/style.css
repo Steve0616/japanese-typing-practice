@@ -1067,3 +1067,13 @@ a {
 .settings-level .level-btn.active {
   background: var(--primary);
 }
+
+/* ===== 设置面板提示 ===== */
+.settings-tip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0 0 0;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
